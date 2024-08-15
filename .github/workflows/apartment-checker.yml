@@ -1,0 +1,31 @@
+name: Apartment Checker
+
+on:
+  schedule:
+    # Run every hour from 6 AM to 2 AM Vancouver time (PDT)
+    - cron: '0 13-23 * * *'  # Runs every hour from 6 AM to 4 PM UTC (11 PM PDT)
+    - cron: '0 0-8 * * *'   # Runs every hour from 5 PM to 1 AM UTC (10 PM PDT - 2 AM PDT)
+
+  workflow_dispatch:
+
+jobs:
+  check-apartments:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Apartment Checker
+      env:
+        RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      run: node checkApartments.js
