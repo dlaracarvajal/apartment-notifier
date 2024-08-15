@@ -3,9 +3,8 @@ name: Apartment Checker
 on:
   schedule:
     # Run every hour from 6 AM to 2 AM Vancouver time (PDT)
-    - cron: '0 13-23 * * *'  # Runs every hour from 6 AM to 4 PM UTC (11 PM PDT)
-    - cron: '0 0-8 * * *'   # Runs every hour from 5 PM to 1 AM UTC (10 PM PDT - 2 AM PDT)
-
+    - cron: '0 13-23 * * *'
+    - cron: '0 0-8 * * *'
   workflow_dispatch:
 
 jobs:
@@ -29,3 +28,12 @@ jobs:
         RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         EMAIL_TO: ${{ secrets.EMAIL_TO }}
       run: node checkApartments.js
+
+    - name: Commit and Push updated listings.json
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "actions@github.com"
+        git add listings.json
+        git commit -m "Update listings.json with new listings"
+        git push
+      continue-on-error: true  
